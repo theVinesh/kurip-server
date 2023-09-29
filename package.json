@@ -1,0 +1,20 @@
+{
+  "name": "kurip-server",
+  "version": "1.0.0",
+  "description": "Kurip's backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "kurip",
+    "notes"
+  ],
+  "author": "@theVinesh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
