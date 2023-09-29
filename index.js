@@ -1,5 +1,9 @@
-import express from "express";
+const express = require("express");
+const path = require("path");
+
 const app = express();
+
+app.use(express.static(path.join(__dirname, "public"), { maxAge: 0 }));
 
 const sample_kurips = [
   {
@@ -32,9 +36,14 @@ const sample_kurips = [
   },
 ];
 
-app.get("/api/kurips", (req, res) => res.json(sample_kurips));
+app.get("/api/kurips", (req, res) => {
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+  res.json(sample_kurips);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>
   console.log(`Server running on ${port}, http://localhost:${port}`)
 );
+
+module.exports = app;
