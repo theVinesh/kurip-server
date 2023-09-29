@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const axios = require("axios");
 
 const app = express();
 
@@ -37,8 +38,37 @@ const sample_kurips = [
 ];
 
 app.get("/api/kurips", (req, res) => {
-  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+  res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
   res.json(sample_kurips);
+});
+
+const githubApiClient = axios.create({
+  baseURL: "https://api.github.com",
+  headers: {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  },
+});
+
+app.get("/api/user", async (req, res) => {
+  try {
+    const token = req.headers.authorization
+      ? req.headers.authorization.split(" ")[1]
+      : null;
+    if (!token) res.status(401).json({ message: "No token provided" });
+    
+    const { avatar_url, name, url } = (
+      await githubApiClient.get("/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    ).data;
+
+    res.json({ name, base_url: url, avatar_url });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
 });
 
 const port = process.env.PORT || 3000;
